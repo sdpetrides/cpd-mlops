@@ -1,0 +1,14 @@
+{
+    "policy": {
+        "kernel_delay_release_time": 300
+    },
+    "kernel": {
+        "connection_timeout": 300,
+        "gpu": "exclusive"
+    },
+    "resource_allocation": {
+        "kernel": {
+            "resources": "ncpus=2,ncpus_limit=4,mem=4000,mem_limit=8000"
+        }
+    }
+}

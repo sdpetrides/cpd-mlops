@@ -1,1 +1,14 @@
-{"name": "__PLACEHOLDER__", "tag": "test", "weight_path": "./", "model_path": "", "runtime": "dlipy3", "framework": "PyTorch", "kernel_path": "__PLACEHOLDER__", "schema_version": "1"}
+{
+    "name": "alpaca-7b",
+    "tag": "test",
+    "weight_path": "./",
+    "model_path": "",
+    "runtime": "dlipy3",
+    "framework": "PyTorch",
+    "kernel_path": "kernel.py",
+    "readme": "README.md",
+    "schema_version": "1",
+    "attributes": [
+        {"key": "cpd-volumes-cpd::LLM", "value": "/mnts/llm:ro"}
+    ]
+}
