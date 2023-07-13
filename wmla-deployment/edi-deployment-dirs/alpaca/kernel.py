@@ -69,6 +69,46 @@ class MatchKernel(Kernel):
         else:
             Kernel.log_error("/mnts/llm does not exist")
 
+        self.device = "cuda:0"
+        self.base_model = "yahma/llama-7b-hf"
+        self.lora_weights = "yahma/alpaca-7b-lora"
+        self.cache_directory = "/mnts/llm"
+
+        if os.path.exists(self.cache_directory):
+            Kernel.log_info(f"{self.cache_directory} exists")
+        else:
+            Kernel.log_error(f"{self.cache_directory} does not exist")
+
+        try:
+            self.prompter = Prompter("")
+            self.tokenizer = LlamaTokenizer.from_pretrained(self.base_model)
+
+            Kernel.log_info(
+                "MatchKernel on_kernel_start before from_pretrained"
+            )
+
+#             model = LlamaForCausalLM.from_pretrained(
+#                 self.base_model,
+#                 load_in_8bit=True,
+#                 torch_dtype=torch.float16,
+#                 device_map="auto",
+#                 cache_dir=self.cache_directory,
+#             )
+#             Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
+#             Kernel.log_info("MatchKernel on_kernel_start before from_pretrained")
+
+#             model = PeftModel.from_pretrained(model, self.lora_weights)
+
+#             Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
+
+#             model.config.pad_token_id = self.tokenizer.pad_token_id = 0  # unk
+#             model.config.bos_token_id = 1
+#             model.config.eos_token_id = 2
+
+#             self.model = torch.compile(model)
+        except Exception as e:
+            Kernel.log_error(str(e))
+
     def on_task_invoke(self, task_context):
         Kernel.log_info("on_task_invoke")
         output_data = {}

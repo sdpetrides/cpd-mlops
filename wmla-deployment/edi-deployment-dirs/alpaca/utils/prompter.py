@@ -14,7 +14,8 @@ class Prompter(object):
     def __init__(self, template_name: str = "", verbose: bool = False):
         self._verbose = verbose
         if not template_name:
-            # Enforce the default here, so the constructor can be called with '' and will not break.
+            # Enforce the default here, so the constructor
+            # can be called with '' and will not break.
             template_name = "alpaca"
         file_name = osp.join("templates", f"{template_name}.json")
         if not osp.exists(file_name):
@@ -23,7 +24,8 @@ class Prompter(object):
             self.template = json.load(fp)
         if self._verbose:
             print(
-                f"Using prompt template {template_name}: {self.template['description']}"
+                f"Using prompt template {template_name}: "
+                f"{self.template['description']}"
             )
 
     def generate_prompt(
