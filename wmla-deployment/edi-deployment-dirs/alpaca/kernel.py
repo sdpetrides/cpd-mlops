@@ -13,6 +13,7 @@ import redhareapiversion
 from redhareapi import Kernel
 
 from utils import install_requirements
+from utils.prompter import Prompter
 
 dir_user = os.environ['REDHARE_MODEL_PATH']
 
@@ -42,9 +43,19 @@ os.makedirs(dir_pip_cache, exist_ok=True)
 install_requirements(dir_python_pkg)
 sys.path.insert(0, dir_python_pkg)
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
 # Import packages
-import peft
 import torch
+import transformers
+
+import accelerate
+import bitsandbytes
+
+from peft import PeftModel
+from transformers import (
+    GenerationConfig, LlamaForCausalLM, LlamaTokenizer, BitsAndBytesConfig
+)
 
 print(f"CUDA version: {torch.version.cuda}")
 
