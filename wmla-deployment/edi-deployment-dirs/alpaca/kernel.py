@@ -63,11 +63,9 @@ print(f"CUDA version: {torch.version.cuda}")
 class MatchKernel(Kernel):
 
     def on_kernel_start(self, kernel_context):
-        Kernel.log_info("on_kernel_start kernel id: " + kernel_context.get_id())
-        if os.path.exists("/mnts/llm"):
-            Kernel.log_info("/mnts/llm exists")
-        else:
-            Kernel.log_error("/mnts/llm does not exist")
+        Kernel.log_info(
+            "on_kernel_start kernel id: " + kernel_context.get_id()
+        )
 
         self.device = "cuda:0"
         self.base_model = "yahma/llama-7b-hf"
@@ -86,26 +84,24 @@ class MatchKernel(Kernel):
             Kernel.log_info(
                 "MatchKernel on_kernel_start before from_pretrained"
             )
+            model = LlamaForCausalLM.from_pretrained(
+                self.base_model,
+                load_in_8bit=True,
+                torch_dtype=torch.float16,
+                device_map="auto",
+                cache_dir=self.cache_directory,
+            )
+            Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
 
-#             model = LlamaForCausalLM.from_pretrained(
-#                 self.base_model,
-#                 load_in_8bit=True,
-#                 torch_dtype=torch.float16,
-#                 device_map="auto",
-#                 cache_dir=self.cache_directory,
-#             )
-#             Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
-#             Kernel.log_info("MatchKernel on_kernel_start before from_pretrained")
+            Kernel.log_info("MatchKernel on_kernel_start before from_pretrained")
+            model = PeftModel.from_pretrained(model, self.lora_weights)
+            Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
 
-#             model = PeftModel.from_pretrained(model, self.lora_weights)
+            model.config.pad_token_id = self.tokenizer.pad_token_id = 0  # unk
+            model.config.bos_token_id = 1
+            model.config.eos_token_id = 2
 
-#             Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
-
-#             model.config.pad_token_id = self.tokenizer.pad_token_id = 0  # unk
-#             model.config.bos_token_id = 1
-#             model.config.eos_token_id = 2
-
-#             self.model = torch.compile(model)
+            self.model = torch.compile(model)
         except Exception as e:
             Kernel.log_error(str(e))
 
@@ -113,15 +109,47 @@ class MatchKernel(Kernel):
         Kernel.log_info("on_task_invoke")
         output_data = {}
         try:
+            # Read input
             input_data = json.loads(task_context.get_input_data())
+            instruction = input_data.get("instruction", "")
+            user_input = input_data.get("input", "")
+            temperature = input_data.get("temperature", 0.1)
+            top_p = input_data.get("top_p", 0.75)
+            top_k = input_data.get("top_k", 40)
+            num_beams = input_data.get("num_beams", 4)
+            max_new_tokens = input_data.get("max_new_tokens", 128)
 
-            # request tasks go here
-            output_data["response"] = "Success!"
+            # Generate input tokens
+            prompt = self.prompter.generate_prompt(
+                instruction=instruction, input=user_input
+            )
+            inputs = self.tokenizer(prompt, return_tensors="pt")
+            input_ids = inputs["input_ids"].to(self.device)
+
+            # Set params
+            generation_config = GenerationConfig(
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k,
+                num_beams=num_beams,
+            )
+
+            with torch.no_grad():
+                generation_output = self.model.generate(
+                    input_ids=input_ids,
+                    generation_config=generation_config,
+                    return_dict_in_generate=True,
+                    output_scores=True,
+                    max_new_tokens=max_new_tokens,
+                )
+
+            s = generation_output.sequences[0]
+            output = self.tokenizer.decode(s)
+            output_data["text"] = output
 
             task_context.set_output_data(json.dumps(output_data))
 
         except Exception as e:
-            Kernel.log_error("something went wrong")
             traceback.print_exc()
             output_data['msg'] = str(e)
             task_context.set_output_data(json.dumps(output_data))
