@@ -9,6 +9,6 @@
     "readme": "README.md",
     "schema_version": "1",
     "attributes": [
-        {"key": "cpd-volumes-cpd::LLM", "value": "/mnts/llm:ro"}
+        {"key": "cpd-volumes-cpd::LLM", "value": "/mnts/llm"}
     ]
 }

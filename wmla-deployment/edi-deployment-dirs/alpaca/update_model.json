@@ -8,7 +8,7 @@
     },
     "resource_allocation": {
         "kernel": {
-            "resources": "ncpus=2,ncpus_limit=4,mem=20000,mem_limit=30000"
+            "resources": "ncpus=2,ncpus_limit=4,mem=12000,mem_limit=12000"
         }
     }
 }

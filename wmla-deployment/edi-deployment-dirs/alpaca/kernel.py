@@ -17,7 +17,9 @@ from utils.prompter import Prompter
 
 dir_user = os.environ['REDHARE_MODEL_PATH']
 
-print(f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')}: Setting Up ...")
+print(
+    f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %z')}: Setting Up ..."
+)
 
 # Setup environment variables and paths
 deploy_name = os.environ['REDHARE_MODEL_NAME']
@@ -91,11 +93,17 @@ class MatchKernel(Kernel):
                 device_map="auto",
                 cache_dir=self.cache_directory,
             )
-            Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
+            Kernel.log_info(
+                "MatchKernel on_kernel_start after from_pretrained"
+            )
 
-            Kernel.log_info("MatchKernel on_kernel_start before from_pretrained")
+            Kernel.log_info(
+                "MatchKernel on_kernel_start before from_pretrained"
+            )
             model = PeftModel.from_pretrained(model, self.lora_weights)
-            Kernel.log_info("MatchKernel on_kernel_start after from_pretrained")
+            Kernel.log_info(
+                "MatchKernel on_kernel_start after from_pretrained"
+            )
 
             model.config.pad_token_id = self.tokenizer.pad_token_id = 0  # unk
             model.config.bos_token_id = 1
@@ -109,43 +117,10 @@ class MatchKernel(Kernel):
         Kernel.log_info("on_task_invoke")
         output_data = {}
         try:
-            # Read input
             input_data = json.loads(task_context.get_input_data())
+
             instruction = input_data.get("instruction", "")
             user_input = input_data.get("input", "")
-            temperature = input_data.get("temperature", 0.1)
-            top_p = input_data.get("top_p", 0.75)
-            top_k = input_data.get("top_k", 40)
-            num_beams = input_data.get("num_beams", 4)
-            max_new_tokens = input_data.get("max_new_tokens", 128)
-
-            # Generate input tokens
-            prompt = self.prompter.generate_prompt(
-                instruction=instruction, input=user_input
-            )
-            inputs = self.tokenizer(prompt, return_tensors="pt")
-            input_ids = inputs["input_ids"].to(self.device)
-
-            # Set params
-            generation_config = GenerationConfig(
-                temperature=temperature,
-                top_p=top_p,
-                top_k=top_k,
-                num_beams=num_beams,
-            )
-
-            with torch.no_grad():
-                generation_output = self.model.generate(
-                    input_ids=input_ids,
-                    generation_config=generation_config,
-                    return_dict_in_generate=True,
-                    output_scores=True,
-                    max_new_tokens=max_new_tokens,
-                )
-
-            s = generation_output.sequences[0]
-            output = self.tokenizer.decode(s)
-            output_data["text"] = output
 
             task_context.set_output_data(json.dumps(output_data))
 
@@ -161,4 +136,3 @@ class MatchKernel(Kernel):
 if __name__ == '__main__':
     obj_kernel = MatchKernel()
     obj_kernel.run()
-
