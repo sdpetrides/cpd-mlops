@@ -1,0 +1,14 @@
+{
+    "name": "alpaca-65b",
+    "tag": "test",
+    "weight_path": "./",
+    "model_path": "",
+    "runtime": "dlipy3",
+    "framework": "PyTorch",
+    "kernel_path": "kernel.py",
+    "readme": "README.md",
+    "schema_version": "1",
+    "attributes": [
+        {"key": "cpd-volumes-cpd::LLM3", "value": "/mnts/llm3"}
+    ]
+}

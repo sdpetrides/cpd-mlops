@@ -1,0 +1,11 @@
+accelerate @ git+https://github.com/huggingface/accelerate.git@f3b7f9cf25896d37bc851a572e14e447325d0062
+bitsandbytes==0.39.1
+black==22.6.0
+boto3==1.24.28
+botocore==1.27.28
+numpy==1.23.1
+peft @ git+https://github.com/huggingface/peft.git@b15c18593975d345b3857faba4860c0d68c5d287
+requests==2.28.1
+tokenizers==0.11.4
+transformers @ git+https://github.com/huggingface/transformers.git@3b734f5042a414d0520f56ce3a588cebc756a6db
+urllib3==1.26.11
