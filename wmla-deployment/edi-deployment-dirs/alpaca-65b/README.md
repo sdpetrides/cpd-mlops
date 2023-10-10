@@ -1,4 +1,4 @@
-# README for Alpaca 7B
+# README for Alpaca 65B
 
 ## Summary
 

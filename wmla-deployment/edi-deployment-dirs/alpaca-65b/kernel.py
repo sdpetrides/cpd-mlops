@@ -6,6 +6,7 @@ import json
 import importlib
 import traceback
 import subprocess
+import importlib.metadata
 
 from datetime import datetime, timezone
 
@@ -44,11 +45,13 @@ os.makedirs(dir_pip_cache, exist_ok=True)
 # Install packages and add python install directory into PATH
 install_requirements(dir_python_pkg)
 sys.path.insert(0, dir_python_pkg)
+print(sys.path)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 # Import packages
 import torch
+import tokenizers
 import transformers
 
 import accelerate
@@ -59,6 +62,12 @@ from transformers import (
     GenerationConfig, LlamaForCausalLM, LlamaTokenizer, BitsAndBytesConfig
 )
 
+# Check package versions
+print(f"Pytorch version: {importlib.metadata.version('torch')}")
+print(f"Tokenizers version: {importlib.metadata.version('tokenizers')}")
+print(f"Transformers version: {importlib.metadata.version('transformers')}")
+print(f"Accelerate version: {importlib.metadata.version('accelerate')}")
+print(f"Bitsandbytes version: {importlib.metadata.version('bitsandbytes')}")
 print(f"CUDA version: {torch.version.cuda}")
 
 
