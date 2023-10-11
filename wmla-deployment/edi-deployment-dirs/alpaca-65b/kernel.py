@@ -45,7 +45,6 @@ os.makedirs(dir_pip_cache, exist_ok=True)
 # Install packages and add python install directory into PATH
 install_requirements(dir_python_pkg)
 sys.path.insert(0, dir_python_pkg)
-print(sys.path)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 

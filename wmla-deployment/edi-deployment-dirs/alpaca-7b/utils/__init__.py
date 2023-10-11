@@ -15,7 +15,7 @@ def install_requirements(dir_python_pkg):
         "urllib3==1.26.16",
     ]:
         out = subprocess.check_output(
-            f"pip install {package_name} --upgrade --no-deps --target {dir_python_pkg}",
+            f"pip install {package_name} --no-deps --target {dir_python_pkg}",
             shell=True,
             text=True,
             stderr=subprocess.STDOUT
@@ -31,7 +31,7 @@ def install_requirements(dir_python_pkg):
     ]:
 
         out = subprocess.check_output(
-            f"pip install {package_name} --upgrade --target {dir_python_pkg}",
+            f"pip install {package_name} --target {dir_python_pkg}",
             shell=True,
             text=True,
             stderr=subprocess.STDOUT
