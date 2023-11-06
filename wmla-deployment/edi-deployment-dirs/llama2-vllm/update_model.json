@@ -1,0 +1,17 @@
+{
+    "policy": {
+        "schedule_interval": 30,
+        "kernel_delay_release_time": 30,
+        "kernel_max": 12,
+        "task_execution_timeout": 120
+    },
+    "kernel": {
+        "connection_timeout": 150,
+        "gpu": "exclusive"
+    },
+    "resource_allocation": {
+        "kernel": {
+            "resources": "ncpus=8,ncpus_limit=8,mem=64000,mem_limit=64000"
+        }
+    }
+}
